@@ -31,9 +31,9 @@
       },
       formatter = new Intl.DateTimeFormat([], options);
     
-      console.log(formatter.format(new Date()));
+      console.log(formatter.format(new Date().getTime()));
 
-      heading.innerHTML = 'my time:' + formatter.format(new Date());
+      heading.innerHTML = 'my time:' + formatter.format(new Date().getTime());
     </script>
   </body>
 </html>
