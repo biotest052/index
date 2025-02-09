@@ -9,8 +9,10 @@
     <meta content="https://cdn.discordapp.com/avatars/755453680056008784/2686aa532fc1f7bbf37e7cf2b36e05c3.png?size=1024" property="og:image" />
     <meta content="#34ed3a" data-react-helmet="true" name="theme-color" />
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <style>
-      /* Add a black background color to the top navigation */
+       /* Add a black background color to the top navigation */
       .topnav {
         background-color: #333;
         overflow: hidden;
@@ -19,6 +21,7 @@
       /* Style the links inside the navigation bar */
       .topnav a {
         float: left;
+        display: block;
         color: #f2f2f2;
         text-align: center;
         padding: 14px 16px;
@@ -32,21 +35,30 @@
         color: black;
       }
 
-      /* Add a color to the active/current link */
+      /* Add an active class to highlight the current page */
       .topnav a.active {
         background-color: #04AA6D;
         color: white;
       }
+
+      /* Hide the link that should open and close the topnav on small screens */
+      .topnav .icon {
+        display: none;
+      } 
     </style>
 
   </head>
   <body style="background-color: grey;">
-    <div class="topnav">
-      <a class="active" href="#home">Home</a>
+    
+    <div class="topnav" id="myTopnav">
+      <a href="#home" class="active">Home</a>
       <a href="#news">News</a>
       <a href="#contact">Contact</a>
       <a href="#about">About</a>
-    </div> 
+      <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+        <i class="fa fa-bars"></i>
+      </a>
+    </div>
 
     <div id="time" class="panel__time"></div>
     <script>
