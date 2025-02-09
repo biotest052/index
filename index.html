@@ -7,33 +7,110 @@
     <meta content="https://biotest.dev/" property="og:url" />
     <meta content="https://cdn.discordapp.com/avatars/755453680056008784/2686aa532fc1f7bbf37e7cf2b36e05c3.png?size=1024" property="og:image" />
     <meta content="#34ed3a" data-react-helmet="true" name="theme-color" />
+
+    <style>
+      body, h1, h5 {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        max-width: 500px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .panel h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2b4d67;
+        margin-bottom: 20px;
+      }
+
+      .panel h5 {
+        font-size: 1.2rem;
+        color: #555;
+        margin: 5px 0;
+      }
+
+      .panel h5:first-of-type {
+        margin-top: 20px;
+      }
+
+      .panel #time {
+        font-size: 1.1rem;
+        color: #6a6a6a;
+        margin-top: 30px;
+        font-weight: normal;
+      }
+
+      @media (max-width: 600px) {
+        .panel {
+          padding: 20px;
+        }
+
+        .panel h1 {
+          font-size: 2rem;
+        }
+
+        .panel h5 {
+          font-size: 1rem;
+        }
+      }
+    </style>
+
   </head>
-  <body>
-    <h1>this is a placeholder for now</h1>
-    <h5>a polish bisexual guy,</h5>
-    <h5>i love gamedev and just developing in general.</h5>
-    <h5>i know these languages: c#, c++ and c (a little bit), java, python, javascript.</h5>
-    <h5>currently working on vrcraft (minecraft but vr)</h5>
+  <body style="background-color: grey;">
 
-    <h5 id="time">my time:</h5>
-
+    <div class="panel">
+      <h1 class="centered">welcome to biotest.dev</h1>
+      <h5 class="centered">a polish bisexual guy,</h5>
+      <h5 class="centered">i love gamedev and just developing in general.</h5>
+      <h5 class="centered">i know these languages: c#, c++ and c (a little bit), java, python, javascript.</h5>
+      <h5 class="centered">currently working on vrcraft (minecraft but vr)</h5>
+      <div id="time" class="panel__time"></div>
+    </div>
     <script>
-      const heading = document.getElementById('time');
-      
-      let options = {
-        timeZone: 'Europe/Warsaw',
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-      },
-      formatter = new Intl.DateTimeFormat([], options);
+      function updateTime() {
+        const heading = document.getElementById('time');
+        
+        let options = {
+          timeZone: 'Europe/Warsaw',
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+        };
+        const formatter = new Intl.DateTimeFormat([], options);
     
-      console.log(formatter.format(new Date().getTime()));
+        heading.innerHTML = 'Current time: ' + formatter.format(new Date().getTime());
+      }
 
-      heading.innerHTML = 'my time:' + formatter.format(new Date().getTime());
+      setInterval(updateTime, 10);
+
+      updateTime();
     </script>
   </body>
 </html>
