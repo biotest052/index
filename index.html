@@ -14,5 +14,26 @@
     <h5>i love gamedev and just developing in general.</h5>
     <h5>i know these languages: c#, c++ and c (a little bit), java, python, javascript.</h5>
     <h5>currently working on vrcraft (minecraft but vr)</h5>
+
+    <h5 id="time">my time:</h5>
+
+    <script>
+      const heading = document.getElementById('time');
+      
+      let options = {
+        timeZone: 'Europe/Warsaw',
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+      },
+      formatter = new Intl.DateTimeFormat([], options);
+    
+      console.log(formatter.format(new Date()));
+
+      heading.innerHTML = 'my time:' + formatter.format(new Date());
+    </script>
   </body>
 </html>
