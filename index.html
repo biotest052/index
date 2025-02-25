@@ -13,32 +13,35 @@
     
 
   </head>
-  <body style="background-color: grey;">
-    
-  
+  <body style="background-color: black;">
 
-    <div id="time" class="panel__time"></div>
-    <script>
-      function updateTime() {
-        const heading = document.getElementById('time');
-        
-        let options = {
-          timeZone: 'Europe/Warsaw',
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
-        };
-        const formatter = new Intl.DateTimeFormat([], options);
-    
-        heading.innerHTML = 'Current time: ' + formatter.format(new Date().getTime());
+    <style>
+      async function loopTitleChange() {
+        let names = ["b", "bi", "bio", "biot", "biote", "biotes", "biotest", "biotest0", "biotest05"];
+        let index = 0;
+        let forward = true;
+
+        while (true) {
+          document.title = names[index];
+
+          await new Promise(resolve => setTimeout(resolve, 350));
+
+          if (forward) {
+            index++;
+            if (index === names.length - 1) {
+              forward = false;
+            }
+          } else {
+            index--;
+            if (index === 0) {
+              forward = true;
+            }
+          }
+        }
       }
-
-      setInterval(updateTime, 10);
-
-      updateTime();
-    </script>
+      
+      loopTitleChange();
+    </style>
+  
   </body>
 </html>
