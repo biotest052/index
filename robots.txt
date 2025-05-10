@@ -1,0 +1,8 @@
+User-agent: *
+Allow /lebron-james/
+Allow /lebron-james/*.html
+Allow /resources/*.js
+Allow /resources/*.css
+Allow /resources/fonts/*.woff
+Allow /resources/fonts/*.woff2
+Allow /*.html
