@@ -1,77 +1,89 @@
 @font-face {
-        font-family: "04b03regular";
-        src: url("fonts/04b_03__-webfont.woff2") format("woff2"),
-          url("fonts/04b_03__-webfont.woff") format("woff");
-        font-weight: normal;
-        font-style: normal;
-      }
+  font-family: "04b03regular";
+  src: url("fonts/04b_03__-webfont.woff2") format("woff2"),
+    url("fonts/04b_03__-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
 
-      body {
-        margin: 0;
-        overflow: hidden;
-        background: black;
-      }
-      canvas {
-        display: block;
-      }
-      .profileDiv {
-        font-family: "04b03regular";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1;
-        background-color: rgba(0, 0, 0, 0.25);
-        border-radius: 10%;
-        text-align: center;
-        
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-      }
-      iframe {
-        opacity: 100%;
-        display: block;
-        margin: 0 auto;
-        z-index: 1;
-        overflow: hidden !important;
-        pointer-events: none;
-      }
-      p {
-        color: white;
-        font-family: "04b03regular";
-        font-size: 20px;
-        margin-top: 1%;
-        opacity: 100;
-        margin-left: 10px;
-        margin-right: 10px;
-      }
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+}
 
-      .youtubeButton, .lebronButton {
-        background-color: black;
-        border: none;
-        color: white;
-        width: 50px;
-        height: 50px;
-        cursor: pointer;
-        border-radius: 25%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        transition: background-color 0.3s;
-        display: inline-block;
-        z-index: 2;
-        position: relative;
-        
-        background-size: cover;
-      }
+canvas {
+  display: block;
+}
 
-      .youtubeButton:hover, .lebronButton:hover {
-        background-color: black;
-      }
-      .lebronButton {
-        background-image: url(https://cdn.pixelatedaria.space/pfps/lebron.png);
-      }
-      .youtubeButton {
+.profileDiv {
+  font-family: "04b03regular";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 10%;
+  text-align: center;
+  width: 350px;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
 
-        background-image: url(https://pixelatedaria.space/resources/logo1.png);
-      }
+a {
+  color: green;
+}
+
+iframe {
+  opacity: 100%;
+  display: block;
+  margin: 0 auto;
+  z-index: 1;
+  overflow: hidden !important;
+  pointer-events: none;
+}
+
+p {
+  color: white;
+  font-family: "04b03regular";
+  font-size: 20px;
+  margin-top: 1%;
+  opacity: 100;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.youtubeButton,
+.lebronButton {
+  background-color: black;
+  border: none;
+  color: white;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  border-radius: 25%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s;
+  display: inline-block;
+  z-index: 2;
+  position: relative;
+
+  background-size: cover;
+}
+
+.youtubeButton:hover,
+.lebronButton:hover {
+  background-color: black;
+}
+
+.lebronButton {
+  background-image: url(https://cdn.pixelatedaria.space/pfps/lebron.png);
+}
+
+.youtubeButton {
+
+  background-image: url(https://pixelatedaria.space/resources/logo1.png);
+}

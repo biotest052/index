@@ -1,160 +1,220 @@
+const FOREGROUND = "#50FF00";
+const GRID_FOREGROUND = "#F0F0F0";
+const BACKGROUND = "#112233";
 
-      const canvas = document.getElementById("starfield");
-      const ctx = canvas.getContext("2d");
+const FPS = 60;
+const NEAR = 0.05;
 
-      let width = (canvas.width = window.innerWidth);
-      let height = (canvas.height = window.innerHeight);
-      let centerX = width / 2;
-      let centerY = height / 2;
+const GRAVITY = -9.8;
+const FLOOR_Y = -1;
+const CUBE_COUNT = 50;
 
-      const stars = [];
-      const numStars = 7500;
-      const spread = 2000;
+const canvas = document.getElementById("canvas");
+canvas.width = Math.max(
+    document.documentElement.clientWidth,
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth
+);
+canvas.height = Math.max(
+    document.documentElement.clientHeight,
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight
+);
+const ctx = canvas.getContext("2d");
 
-      function lerp(start, end, amt) {
-        return start + (end - start) * amt;
-      }
+function clear() {
+    ctx.fillStyle = BACKGROUND;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 
-      let lastMouseX = null;
-      let lastMouseY = null;
-      let targetDeltaX = 0;
-      let targetDeltaY = 0;
-      let deltaX = 0;
-      let deltaY = 0;
+function line2D(p1, p2, c = FOREGROUND) {
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.strokeStyle = c;
+    ctx.stroke();
+}
 
-      window.addEventListener("mousemove", (e) => {
-        if (lastMouseX !== null && lastMouseY !== null) {
-          targetDeltaX = (e.clientX - lastMouseX) / centerX;
-          targetDeltaY = (e.clientY - lastMouseY) / centerY;
+function screen(p) {
+    return {
+        x: (p.x + 1) * 0.5 * canvas.width,
+        y: (1 - (p.y + 1) * 0.5) * canvas.height,
+    };
+}
+
+function project({ x, y, z }) {
+    if (z <= NEAR) return null;
+    const fov = 0.75;
+    const aspect = canvas.width / canvas.height;
+    return {
+        x: (x / z) * fov / aspect,
+        y: (y / z) * fov,
+    };
+}
+
+function line3D(a, b, c = FOREGROUND) {
+    const pa = project(a);
+    const pb = project(b);
+    if (!pa || !pb) return;
+    line2D(screen(pa), screen(pb), c);
+}
+
+const vs = [
+    { x:  0.5, y:  0.5, z:  0.5 },
+    { x: -0.5, y:  0.5, z:  0.5 },
+    { x: -0.5, y: -0.5, z:  0.5 },
+    { x:  0.5, y: -0.5, z:  0.5 },
+    { x:  0.5, y:  0.5, z: -0.5 },
+    { x: -0.5, y:  0.5, z: -0.5 },
+    { x: -0.5, y: -0.5, z: -0.5 },
+    { x:  0.5, y: -0.5, z: -0.5 },
+];
+
+const edges = [
+    [0, 1, 2, 3],
+    [4, 5, 6, 7],
+    [0, 4],
+    [1, 5],
+    [2, 6],
+    [3, 7],
+];
+
+let physicsWorld;
+let rigidBodies = [];
+
+    const collisionConfig = new Ammo.btDefaultCollisionConfiguration();
+    const dispatcher = new Ammo.btCollisionDispatcher(collisionConfig);
+    const broadphase = new Ammo.btDbvtBroadphase();
+    const solver = new Ammo.btSequentialImpulseConstraintSolver();
+    physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
+    physicsWorld.setGravity(new Ammo.btVector3(0, GRAVITY, 0));
+
+    const floorShape = new Ammo.btBoxShape(new Ammo.btVector3(50, 0.5, 50));
+    const floorTransform = new Ammo.btTransform();
+    floorTransform.setIdentity();
+    floorTransform.setOrigin(new Ammo.btVector3(0, FLOOR_Y - 0.5, 25));
+    const floorMotionState = new Ammo.btDefaultMotionState(floorTransform);
+    const floorRbInfo = new Ammo.btRigidBodyConstructionInfo(0, floorMotionState, floorShape, new Ammo.btVector3(0,0,0));
+    const floorBody = new Ammo.btRigidBody(floorRbInfo);
+    physicsWorld.addRigidBody(floorBody);
+
+    for (let i = 0; i < CUBE_COUNT; i++) {
+        const size = 1;
+        const shape = new Ammo.btBoxShape(new Ammo.btVector3(size/2, size/2, size/2));
+        const transform = new Ammo.btTransform();
+        transform.setIdentity();
+        transform.setOrigin(new Ammo.btVector3(
+            (Math.random() - 0.5) * 6,
+            Math.random() * 4 + 2,
+            Math.random() * 6 + 3
+        ));
+        const quat = new Ammo.btQuaternion(
+            Math.random() - 0.5,
+            Math.random() - 0.5,
+            Math.random() - 0.5,
+            1
+        );
+        quat.normalize();
+        transform.setRotation(quat);
+
+        const mass = 1;
+        const localInertia = new Ammo.btVector3(0,0,0);
+        shape.calculateLocalInertia(mass, localInertia);
+
+        const motionState = new Ammo.btDefaultMotionState(transform);
+        const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
+        const body = new Ammo.btRigidBody(rbInfo);
+
+        physicsWorld.addRigidBody(body);
+        rigidBodies.push({ body, size });
+    }
+
+    requestAnimationFrame(frame);
+
+function transformVertex(v, origin, quat, scale) {
+    const x = v.x * scale;
+    const y = v.y * scale;
+    const z = v.z * scale;
+
+    const qx = quat.x(), qy = quat.y(), qz = quat.z(), qw = quat.w();
+
+    const ix =  qw*x + qy*z - qz*y;
+    const iy =  qw*y + qz*x - qx*z;
+    const iz =  qw*z + qx*y - qy*x;
+    const iw = -qx*x - qy*y - qz*z;
+
+    return {
+        x: ix*qw + iw*-qx + iy*-qz - iz*-qy + origin.x(),
+        y: iy*qw + iw*-qy + iz*-qx - ix*-qz + origin.y(),
+        z: iz*qw + iw*-qz + ix*-qy - iy*-qx + origin.z()
+    };
+}
+
+function drawCube(body, size) {
+    const transform = new Ammo.btTransform();
+    body.getMotionState().getWorldTransform(transform);
+    const origin = transform.getOrigin();
+    const rotation = transform.getRotation();
+
+    for (const e of edges) {
+        for (let i = 0; i < e.length; i++) {
+            const a = transformVertex(vs[e[i]], origin, rotation, size);
+            const b = transformVertex(vs[e[(i + 1) % e.length]], origin, rotation, size);
+            line3D(a, b);
         }
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-      });
+    }
+}
 
-      for (let i = 0; i < numStars; i++) {
-        stars.push({
-          x: (Math.random() - 0.5) * spread * 2,
-          y: (Math.random() - 0.5) * spread * 2,
-          z: (Math.random() - 0.5) * spread * 2,
-        });
-      }
+function drawFloorGrid() {
+    const size = 50;
+    const step = 1;
+    const zFar = 50;
 
-      function rotateY(point, angle) {
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-        const x = point.x * cos - point.z * sin;
-        const z = point.x * sin + point.z * cos;
-        return { x, y: point.y, z };
-      }
+    for (let x = -size; x <= size; x += step)
+        line3D({ x, y: FLOOR_Y, z: NEAR }, { x, y: FLOOR_Y, z: zFar }, GRID_FOREGROUND);
 
-      function rotateX(point, angle) {
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-        const y = point.y * cos - point.z * sin;
-        const z = point.y * sin + point.z * cos;
-        return { x: point.x, y, z };
-      }
+    for (let z = NEAR; z <= zFar; z += step)
+        line3D({ x: -size, y: FLOOR_Y, z }, { x: size, y: FLOOR_Y, z }, GRID_FOREGROUND);
+}
 
-      function project(point) {
-        const fov = 500;
-        const scale = fov / (fov + point.z);
-        return {
-          x: centerX + point.x * scale,
-          y: centerY + point.y * scale,
-          radius: 1.5 * scale,
-        };
-      }
+function allCubesStopped(rigidBodies, threshold = 0.05) {
+    return rigidBodies.every(rb => {
+        const vel = rb.body.getLinearVelocity();
+        return Math.abs(vel.x()) < threshold &&
+                Math.abs(vel.y()) < threshold &&
+                Math.abs(vel.z()) < threshold;
+    });
+}
 
-      function updateStars() {
-        deltaX = lerp(deltaX, targetDeltaX, 0.05);
-        deltaY = lerp(deltaY, targetDeltaY, 0.05);
+function kickCubes(rigidBodies) {
+    for (const rb of rigidBodies) {
+        const vx = (Math.random() - 0.5) * 4;
+        const vy = Math.random() * 4 + 2;
+        const vz = (Math.random() - 0.5) * 4;
+        rb.body.setLinearVelocity(new Ammo.btVector3(vx, vy, vz));
+        rb.body.setAngularVelocity(new Ammo.btVector3(vz, vy, vx));
+    }
+}
 
-        const angleY = deltaX * 0.5;
-        const angleX = deltaY * 0.5;
+function frame() {
+    clear();
+    drawFloorGrid();
 
-        for (let i = 0; i < stars.length; i++) {
-          let star = stars[i];
-          star = rotateY(star, angleY);
-          star = rotateX(star, angleX);
-          stars[i] = star;
-        }
+    const dt = 1 / FPS;
+    if (physicsWorld) physicsWorld.stepSimulation(dt, 10);
 
-        targetDeltaX *= 0.95;
-        targetDeltaY *= 0.95;
-      }
+    if (allCubesStopped(rigidBodies)) {
+        kickCubes(rigidBodies);
+    }
 
-      function drawStars() {
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = "white";
+    for (const rb of rigidBodies) {
+        drawCube(rb.body, rb.size);
+    }
 
-        for (let star of stars) {
-          if (star.z > -250) {
-            const projected = project(star);
-            if (
-              projected.x >= 0 &&
-              projected.x < width &&
-              projected.y >= 0 &&
-              projected.y < height
-            ) {
-              ctx.beginPath();
-              ctx.arc(
-                projected.x,
-                projected.y,
-                projected.radius,
-                0,
-                2 * Math.PI
-              );
-              ctx.fill();
-            }
-          }
-        }
-      }
-
-      function animate() {
-        updateStars();
-        drawStars();
-        requestAnimationFrame(animate);
-      }
-
-      animate();
-
-      window.addEventListener("resize", () => {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        centerX = width / 2;
-        centerY = height / 2;
-      });
-
-      async function loopTitleChange() {
-        let names = [
-          "b",
-          "b",
-          "bi",
-          "bio",
-          "biot",
-          "biote",
-          "biotes",
-          "biotest",
-          "biotest0",
-          "biotest05",
-          "biotest05",
-        ];
-        let index = 0;
-        let forward = true;
-
-        while (true) {
-          document.title = names[index];
-          await new Promise((resolve) => setTimeout(resolve, 175));
-
-          if (forward) {
-            index++;
-            if (index === names.length - 1) forward = false;
-          } else {
-            index--;
-            if (index === 0) forward = true;
-          }
-        }
-      }
-
-      loopTitleChange();
+    requestAnimationFrame(frame);
+}
