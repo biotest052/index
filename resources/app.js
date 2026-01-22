@@ -87,6 +87,7 @@ const edges = [
 let physicsWorld;
 let rigidBodies = [];
 
+Ammo().then((AmmoLib) => {
     const collisionConfig = new Ammo.btDefaultCollisionConfiguration();
     const dispatcher = new Ammo.btCollisionDispatcher(collisionConfig);
     const broadphase = new Ammo.btDbvtBroadphase();
@@ -135,6 +136,7 @@ let rigidBodies = [];
     }
 
     requestAnimationFrame(frame);
+});
 
 function transformVertex(v, origin, quat, scale) {
     const x = v.x * scale;
