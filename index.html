@@ -2,36 +2,39 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>biotest</title>
     <link rel="stylesheet" href="./resources/main.css" />
     <link rel="icon" href="favicon.svg" sizes="any" type="image/svg+xml">
+    <style>
+      .bottom-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+    </style>
   </head>
   <body>
-    <canvas id="canvas"></canvas>
-    
+  <canvas id="canvas"></canvas>
     <div class="profileDiv">
-      <img src="https://cdn.pixelatedaria.space/pfps/biotest05.png", width="200", height="200", border-radius: 50%, border: none></img>
+      <img src="https://cdn.pixelatedaria.space/pfps/biotest05.png" width="200" height="200" style="border-radius: 50%; border: none;">
       <p id="profileText">biotest05</p>
       <p id="profileText" style="font-size: 75%">
         games i worked on:<br>
         <a href="https://vrcraft.dev">vrcraft</a> (in development)<br>
         <a href="https://discord.gg/AxYM5E92xq">mining haven</a>
       </p>
-
       <p>Contact:</p>
       <p><a href="mailto:biotest052@gmail.com">biotest052@gmail.com</a></p>
-
-      <a href="https://www.youtube.com/@biotest05" class="youtubeButton"></a>
-      <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support me on Ko-fi', '#72a4f2', 'Q5Q21FBYNB');kofiwidget2.draw();</script> 
+      <div class="bottom-row">
+        <script src='https://storage.ko-fi.com/cdn/widget/Widget_2.js' onload="kofiwidget2.init('Support me on Ko-fi', '#72a4f2', 'Q5Q21FBYNB');kofiwidget2.draw();"></script>
+        <a href="https://www.youtube.com/@biotest05" class="youtubeButton"></a>
+      </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/gh/kripken/ammo.js@HEAD/builds/ammo.wasm.js"></script>
-    <script src="../resources/app.js"></script>
-    <script src="../resources/canvas.js"></script>
-    <script src="../resources/oneko.js"></script>
+    <script src="resources/app.js"></script>
+    <script src="resources/canvas.js"></script>
   </body>
 </html>
