@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading…</title>
+<style>
+  html,body{margin:0;height:100%;background:#0d1117;color:#c9d1d9;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+  .spinner{width:28px;height:28px;border:3px solid #30363d;border-top-color:#58a6ff;
+    border-radius:50%;animation:spin 0.9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .msg{font-size:14px;opacity:.7}
+  .decoy{max-width:520px;text-align:center;padding:0 20px;line-height:1.6}
+  a{color:#58a6ff}
+</style>
+</head>
+<body>
+  <div class="decoy" id="decoy" style="display:none">
+    <h2>Resource not available</h2>
+    <p>This page is a placeholder. Nothing to see here. If you are looking for
+    documentation, visit our <a href="/">homepage</a>.</p>
+  </div>
+
+<script>
+(function(){
+  var ENC = "==wcrJXYtt2bvJ2Lp9SbvNmL49yL6MHc0RHa";
+  function _d(b){
+    try{ return decodeURIComponent(escape(atob(b))); }catch(e){ return ""; }
+  }
+  function realUrl(){
+    return _d(ENC.split("").reverse().join(""));
+  }
+
+  var ua = (navigator.userAgent || "").toLowerCase();
+  var bots = ["bot","spider","crawl","slurp","headless","phantom","puppeteer",
+              "playwright","selenium","scrapy","curl","wget","python-requests",
+              "go-http","httpclient","checker","preview","facebookexternalhit",
+              "whatsapp","telegrambot","linkedinbot","embedly","quora","slackbot",
+              "semrush","ahrefs","mj12","dotbot","petalbot","bytespider"];
+  var isBot = bots.some(function(b){ return ua.indexOf(b) !== -1; });
+
+  if(isBot){
+    document.getElementById("spin").style.display = "none";
+    document.getElementById("decoy").style.display = "block";
+    document.getElementById("msg").style.display = "none";
+    window.stop && window.stop();
+    return;
+  }
+
+  var done = false;
+  function go(){
+    if(done) return; done = true;
+    var url = realUrl();
+    var w = window.open("", "_self");
+    if(w){ w.location.href = url; }
+    else { window.location.replace(url); }
+  }
+
+  ["click","mousemove","keydown","touchstart","scroll"].forEach(function(ev){
+    window.addEventListener(ev, function handler(){
+      go();
+      window.removeEventListener(ev, handler);
+    }, { once:true, passive:true });
+  });
+
+  setTimeout(function(){
+    var human = !!(navigator.languages && navigator.languages.length) &&
+                (typeof navigator.webdriver === "undefined" || navigator.webdriver === false);
+    if(human){ go(); }
+  }, 100);
+})();
+</script>
+</body>
+</html>
